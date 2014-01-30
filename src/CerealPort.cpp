@@ -224,7 +224,7 @@ int cereal::CerealPort::readLine(char * buffer, int length, int timeout)
 	while(current < length-1)
 	{
 		if(current > 0)
-			if(buffer[current-1] == '\n')
+            if(buffer[current-1] == '\n' || buffer[current-1] == '\r')
 				return current;
 
 		if((retval = poll(ufd, 1, timeout)) < 0) CEREAL_EXCEPT(cereal::Exception, "poll failed -- error = %d: %s", errno, strerror(errno));
