@@ -225,7 +225,10 @@ int cereal::CerealPort::readLine(char * buffer, int length, int timeout)
 	{
 		if(current > 0)
             if(buffer[current-1] == '\n' || buffer[current-1] == '\r')
+            {
+                buffer[current] = 0;
 				return current;
+            }
 
 		if((retval = poll(ufd, 1, timeout)) < 0) CEREAL_EXCEPT(cereal::Exception, "poll failed -- error = %d: %s", errno, strerror(errno));
 
@@ -257,7 +260,7 @@ bool cereal::CerealPort::readLine(std::string * buffer, int timeout)
 	while(buffer->size() < buffer->max_size()/2)
 	{
 		// Look for the end char
-		ret = buffer->find_first_of('\n');
+        ret = buffer->find_first_of("\n\r");
 		if(ret > 0)
 		{
 			// If it is there clear everything after it and return
