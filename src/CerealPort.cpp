@@ -45,6 +45,8 @@
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
 
 #include "cereal_port/CerealPort.h"
 
@@ -69,6 +71,8 @@ cereal::CerealPort::~CerealPort()
 void cereal::CerealPort::open(const char * port_name, int baud_rate)
 {
 	if(portOpen()) close();
+
+    serial_path = std::string(port_name);
   
 	// Make IO non blocking. This way there are no race conditions that
 	// cause blocking when a badly behaving process does a read at the same
@@ -140,6 +144,29 @@ void cereal::CerealPort::close()
 
   	if(retval != 0)
     		CEREAL_EXCEPT(cereal::Exception, "Failed to close port properly -- error = %d: %s\n", errno, strerror(errno));
+}
+
+int cereal::CerealPort::available()
+{
+    if (!portOpen()) {
+        return 0;
+    }
+    int count = 0;
+    if (-1 == ioctl (fd_, TIOCINQ, &count)) {
+        CEREAL_EXCEPT(cereal::Exception, "Available error -- error = %d: %s\n",  errno, strerror(errno));
+    } else {
+        return static_cast<size_t> (count);
+    }
+}
+
+bool cereal::CerealPort::serialPortExists()
+{
+    struct stat sb;
+    if (stat(serial_path.c_str(), &sb) == 0)
+    {
+        return true;
+    }
+    return false;
 }
 
 int cereal::CerealPort::write(const char * data, int length)
