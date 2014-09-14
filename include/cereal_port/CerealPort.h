@@ -101,6 +101,13 @@ namespace cereal
 		*/
 		int available();
 
+        //! Checks if system path exists
+        /*!
+        * This call is particularly useful in the case that an USB is pull off from the connector.
+        * This method allows to check if the serial port still exists.
+        */
+        bool serialPortExists();
+
 		//! Check whether the port is open or not
 		bool portOpen() { return fd_ != -1; }
 
@@ -279,6 +286,9 @@ namespace cereal
 		bool stream_paused_;
 		//! Whether streaming is stopped or not
 		bool stream_stopped_;
+
+        //! Serial port path
+        std::string serial_path;
 	};
 
 }
