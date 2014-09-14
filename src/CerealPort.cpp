@@ -45,6 +45,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
+#include <sys/ioctl.h>
 
 #include "cereal_port/CerealPort.h"
 
