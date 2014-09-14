@@ -142,6 +142,19 @@ void cereal::CerealPort::close()
     		CEREAL_EXCEPT(cereal::Exception, "Failed to close port properly -- error = %d: %s\n", errno, strerror(errno));
 }
 
+int cereal::CerealPort::available()
+{
+  if (!portOpen()) {
+    return 0;
+  }
+  int count = 0;
+  if (-1 == ioctl (fd_, TIOCINQ, &count)) {
+      CEREAL_EXCEPT(cereal::Exception, "Available error -- error = %d: %s\n",  errno, strerror(errno));
+  } else {
+      return static_cast<size_t> (count);
+  }
+}
+
 int cereal::CerealPort::write(const char * data, int length)
 {
 	int len = length==-1 ? strlen(data) : length;

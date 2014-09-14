@@ -94,6 +94,12 @@ namespace cereal
 		* This call essentially wraps close.
 		*/
 		void close();
+		
+		//! Get number of bytes in the input buffer.
+		/*!
+		* This call returns how many bytes are available to read.
+		*/
+		int available();
 
 		//! Check whether the port is open or not
 		bool portOpen() { return fd_ != -1; }
